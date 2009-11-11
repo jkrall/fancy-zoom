@@ -32,18 +32,18 @@ var FancyZoomBox = {
   directory : 'images',
   zooming   : false,
   setup     : false,
-  
+
   init: function(directory) {
     if (FancyZoomBox.setup) return;
     FancyZoomBox.setup = true;
-    
+
     var ie = navigator.userAgent.match(/MSIE\s(\d)+/);
     if (ie) {
       var version = parseInt(ie[1]);
       Prototype.Browser['IE' + version.toString()] = true;
-      Prototype.Browser.ltIE7 = (version < 7) ? true : false;
+      Prototype.Browser.ltIE7 = (version <= 7) ? true : false;
     }
-    
+
     var html = '<div id="zoom" style="display:none;"> \
                   <table id="zoom_table" style="border-collapse:collapse; width:100%; height:100%;"> \
                     <tbody> \
@@ -71,10 +71,10 @@ var FancyZoomBox = {
                     <img src="' + FancyZoomBox.directory + '/closebox.png" alt="Close" style="border:none; margin:0; padding:0;" /> \
                   </a> \
                 </div>';
-    
+
     var body  = $$('body').first();
     body.insert(html);
-    
+
     FancyZoomBox.zoom = $('zoom');
     FancyZoomBox.zoom_table = $('zoom_table');
     FancyZoomBox.zoom_close = $('zoom_close');
@@ -82,7 +82,7 @@ var FancyZoomBox = {
     FancyZoomBox.zoom_close.observe('click', FancyZoomBox.hide);
     FancyZoomBox.middle_row = $A([$$('td.ml'), $$('td.mm'), $$('td.mr')]).flatten();
     FancyZoomBox.cells = FancyZoomBox.zoom_table.select('td');
-    
+
     // hide zoom if click fired is not inside zoom
     $$('html').first().observe('click', function(e) {
       var click_in_zoom = e.findElement('#zoom'),
@@ -99,13 +99,13 @@ var FancyZoomBox = {
         FancyZoomBox.hide(e);
       }
     });
-    
+
     // just use gifs as ie6 and below suck
     if (Prototype.Browser.ltIE7) {
       FancyZoomBox.switchBackgroundImagesTo('gif');
-    }    
+    }
   },
-  
+
   show: function(e) {
     e.stop();
 		if (FancyZoomBox.zooming) return;
@@ -128,7 +128,7 @@ var FancyZoomBox = {
 			top				: FancyZoomBox.curTop.px(),
 			left			: FancyZoomBox.curLeft.px()
 		});
-    
+
 		new Effect.Parallel([
 			new Effect.Appear(FancyZoomBox.zoom, {sync:true}),
 			new Effect.Move(FancyZoomBox.zoom, {x: FancyZoomBox.moveX, y: FancyZoomBox.moveY, sync: true}),
@@ -150,15 +150,16 @@ var FancyZoomBox = {
 					FancyZoomBox.unfixBackgroundsForIE();
 					FancyZoomBox.zoom_close.show();
 					FancyZoomBox.zooming = false;
+					related_div.fire("fancyzoom:show", { zoom_content: FancyZoomBox.zoom_content });
 				}
 			})
 		], { duration: 0.5 });
   },
-  
+
   hide: function(e) {
     e.stop();
 		if (FancyZoomBox.zooming) return;
-		FancyZoomBox.zooming = true;		
+		FancyZoomBox.zooming = true;
 		new Effect.Parallel([
 			new Effect.Move(FancyZoomBox.zoom, {x: FancyZoomBox.moveX*-1, y: FancyZoomBox.moveY*-1, sync: true}),
 			new Effect.Morph(FancyZoomBox.zoom, {
@@ -193,16 +194,14 @@ var FancyZoomBox = {
     var new_img = close_img.readAttribute('src').gsub(/\.(png|gif|none)$/, '.' + to);
     close_img.writeAttribute('src', new_img);
   },
-  
+
   // prevents the thick black border that happens when appearing or fading png in IE
 	fixBackgroundsForIE: function() {
     if (Prototype.Browser.IE7) { FancyZoomBox.switchBackgroundImagesTo('gif'); }
 	},
-	
-	// swaps back to png's for prettier shadows
-	unfixBackgroundsForIE: function() {
-    if (Prototype.Browser.IE7) { FancyZoomBox.switchBackgroundImagesTo('png'); }
-	}
+
+	// swaps back to png's for prettier shadows  (NO, now it does nothing.  We'll keep the gif images, thank you)
+	unfixBackgroundsForIE: function() { }
 }
 
 var FancyZoom = Class.create({
