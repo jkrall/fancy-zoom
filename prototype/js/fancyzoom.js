@@ -3,7 +3,7 @@ Object.extend(String.prototype, {
   ensureEndsWith: function(str) {
     return this.endsWith(str) ? this : this + str;
   },
-  
+
   // makes sure that string ends with px (for setting widths and heights)
   px: function() {
     return this.ensureEndsWith('px');
@@ -41,7 +41,7 @@ var FancyZoomBox = {
     if (ie) {
       var version = parseInt(ie[1]);
       Prototype.Browser['IE' + version.toString()] = true;
-      Prototype.Browser.ltIE7 = (version <= 7) ? true : false;
+      Prototype.Browser.ltIE7 = (version <= 8) ? true : false;
     }
 
     var html = '<div id="zoom" style="display:none;"> \
@@ -181,9 +181,9 @@ var FancyZoomBox = {
 			new Effect.Fade(FancyZoomBox.zoom, {sync:true})
 		], { duration: 0.5 });
   },
-  
+
   // switches the backgrounds of the cells and the close image to png's or gif's
-  // fixes ie's issues with fading and appearing transparent png's with 
+  // fixes ie's issues with fading and appearing transparent png's with
   // no background and ie6's craptacular handling of transparent png's
   switchBackgroundImagesTo: function(to) {
     FancyZoomBox.cells.each(function(td) {
